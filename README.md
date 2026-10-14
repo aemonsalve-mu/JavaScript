@@ -21,7 +21,7 @@ JavaScript/
 ├── css/
 │   └── comandos_js.css               # Estilos de la interfaz de ejemplos básicos
 ├── js/
-│   ├── base/
+│   ├── 1. base/
 │   │   ├── arrays.js
 │   │   ├── bucles.js
 │   │   ├── cadenas.js
@@ -41,7 +41,7 @@ JavaScript/
 │   │   ├── operadores_comparacion.js
 │   │   └── variables_y_tipos.js
 │   │
-│   ├── plantillas/
+│   ├── 2. plantillas/
 │   │   ├── README.md
 │   │   ├── d3.v7.js
 │   │   ├── graficos_base.js
@@ -81,7 +81,7 @@ JavaScript/
 
 ### 1) Ejemplos básicos de JavaScript
 
-Abre `index_comandos_js.html` en un navegador. La página carga los scripts ubicados en `js/base/` y genera la colección de ejercicios del curso.
+Abre `index_comandos_js.html` en un navegador. La página carga los scripts ubicados en `js/1. base/` y genera la colección de ejercicios del curso.
 
 ### 2) Plantillas y gráficos con D3
 
