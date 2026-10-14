@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    
+    <title> Gráfico de líneas </title>
+
+    <!-- Carga de las librerías que se utilizarán -->
+    <script src="https://d3js.org/d3.v4.js"></script>
+
+
+    
+    <body>
+        <div id="lineas"></div>
+    </body>
+    
+</html>
+
+<script>
+
+    var margin = {top: 20, rigth: 20, bottom: 30, left:50}, 
+    width = 960 -margin.left - margin.rigth,
+    height = 500 - margin.top - margin.bottom;
+
+    var parseFecha = d3.timeParse("%Y-%m-%dT%H:%M:%S");
+
+    var x = d3.scaleTime().range([0,width]);
+    var y = d3.scaleLinear().range([height,0]);
+
+    var valueline = d3.line()
+    .x(function(d){ return x(d.date)})
+    .y(function(d){return y(d.close)});
+
+
+    var svg = d3.select("#lineas").append("svg")
+    .attr("width", width + margin.left + margin.rigth)
+    .attr("height",height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + ", " + margin.top +")");
+
+    d3.csv("https://raw.githubusercontent.com/AJM05/Bdata3-Visualizaci-n-datos/main/AENA.csv",
+    function(error,datos){
+        if(error) throw error;
+
+        datos.forEach(function(d){
+            d.date = parseFecha(d.date);
+            d.close = +d.close;
+        })
+
+        datos.sort(function(a,b){
+            return new Date(b.date) - new Date(a.date);
+        })
+
+        x.domain(d3.extent(datos, function(d){return d.date }))
+        y.domain([0, d3.max(datos,function(d){return d.close})])
+
+        svg.append("path")
+        .data([datos])
+        .attr("class","line")
+        .style("fill","none")
+        .style("stroke","green")
+        .attr("d",valueline);
+
+        svg.append("g")
+        .attr("transform","translate(0,"+ height + ")")
+        .call(d3.axisBottom(x));
+
+        svg.append("g")
+        .call(d3.axisLeft(y));
+    })
+
+
+
+</script>
