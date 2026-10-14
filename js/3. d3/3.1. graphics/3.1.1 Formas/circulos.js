@@ -7,9 +7,9 @@ var svg = d3.select("#circle")
 
 // 2. Añadimos el círculo con sus atributos
 svg.append("circle")
-  .attr("cx", 300)
-  .attr("cy", 300)
-  .attr("r", 100)
+  .attr("cx", 250)
+  .attr("cy", 250)
+  .attr("r", 250)
   .attr("stroke", "black")
-  .attr("fill", "#69b3a2")
+  .attr("fill", "#7a69b3")
   
