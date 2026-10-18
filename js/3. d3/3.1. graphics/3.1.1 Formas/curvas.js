@@ -5,8 +5,8 @@ var data = [{x: 0, y: 20}, { x: 150, y: 150}, {x: 300, y: 100 },
 // Creamos el elemento SVG :
 var svg = d3.select("#curve")
     .append("svg")
-    .attr("width", 800)
-    .attr("height", 200)
+    .attr("width", 500)
+    .attr("height", 100)
 
 // Utilizamos la función line de d3:
 var curveFunc = d3.line()
