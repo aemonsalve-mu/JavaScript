@@ -6,8 +6,8 @@ var svg = d3.select ("#rect")
 
 // Añadimos el rectangulo con atributos :
 svg.append ("rect")
-.attr ("x", 10)
-.attr ("y", 120)
+.attr ("x", 20)
+.attr ("y", 100)
 .attr ("width", 600)
 .attr ("height", 40)
 .attr ("stroke","black")

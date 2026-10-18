@@ -8,12 +8,12 @@ var svg = d3.select("#line")
 
  // Utilizamos la f u n c i n line de d3:
  var lineFunc = d3
-. line ()
-.x(function(d){return d.x})
-.y(function(d){return d.y})
+ .line()
+ .x(function(d){return d.x})
+ .y(function(d){return d.y})
 
 // Le damos atributos a la l n e a que hemos creado :
-svg.append ("path")
+svg.append("path")
 .attr("d", lineFunc(data))
 .attr("stroke", "black")
 .attr("fill", "none");
