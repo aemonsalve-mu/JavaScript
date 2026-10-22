@@ -16,10 +16,16 @@ El proyecto pretende servir como guía práctica para:
 ```text
 JavaScript/
 ├── README.md                         # Documentación del proyecto
-├── index_comandos_js.html            # Página principal para ejemplos básicos de JS
+├── index.html                        # Inicio con selección de actividades
+├── index_comandos.html               # Actividad de JavaScript básico
+├── index_ej.html                     # Actividad de visualización con D3.js
 ├── d3.v7.js                          # Biblioteca D3 local
 ├── css/
+│   ├── inicio.css                    # Estilos de la página de inicio
 │   └── comandos_js.css               # Estilos de la interfaz de ejemplos básicos
+├── Ejercicio/
+│   ├── financial_data.json           # Datos del dashboard financiero
+│   └── css/style.css                 # Estilos del dashboard
 ├── js/
 │   ├── 1. base/
 │   │   ├── arrays.js
@@ -79,17 +85,20 @@ JavaScript/
 
 ## Cómo ejecutarlo
 
-### 1) Ejemplos básicos de JavaScript
+### Página de inicio y actividades
 
-Abre `index_comandos_js.html` en un navegador. La página carga los scripts ubicados en `js/1. base/` y genera la colección de ejercicios del curso.
+Abre `index.html` en el navegador para ver la selección de actividades:
 
-### 2) Plantillas y gráficos con D3
+- **JavaScript básico** (`index_comandos.html`): carga los ejemplos organizados por temas desde `js/1. base/`.
+- **Visualización de datos** (`index_ej.html`): abre un dashboard financiero interactivo con gráficos D3.js. Sus estilos y datos se encuentran en `Ejercicio/css/style.css` y `Ejercicio/financial_data.json`.
 
-Dentro de `js/plantillas/` y `js/3. d3/` hay ejemplos HTML y scripts JavaScript listos para abrir con el navegador. En algunos casos es necesario descomprimir archivos `.zip` antes de ejecutarlos.
+La página de inicio está preparada para ampliar la selección: se pueden añadir nuevas tarjetas con enlaces a otras actividades.
 
-### 3) Material adicional
+Para que el dashboard cargue automáticamente los datos, abre el proyecto mediante un servidor web local (por ejemplo, la extensión Live Server de VS Code). Si abres el archivo directamente y el navegador bloquea la lectura automática por restricciones CORS, selecciona `Ejercicio/financial_data.json` con el botón de carga del dashboard.
 
-La carpeta `js/4. plotly/`, `js/5. Leaflet/` y `js/6. material_adicional/` contiene ejemplos complementarios, recursos descargados y ejercicios de apoyo para visualización y representación gráfica.
+### Más ejemplos y material complementario
+
+Dentro de `js/2. plantillas/` y `js/3. d3/` hay ejemplos HTML y scripts JavaScript listos para abrir con el navegador. Las carpetas `js/4. plotly/`, `js/5. Leaflet/` y `js/6. material_adicional/` reúnen ejemplos complementarios y recursos de apoyo. En algunos casos es necesario descomprimir archivos `.zip` antes de ejecutarlos.
 
 ## Temas incluidos
 
@@ -126,12 +135,13 @@ La parte inicial del proyecto usa un patrón muy simple:
 
 - cada archivo recoge un tema concreto,
 - los scripts se cargan de forma ordenada,
-- el archivo `js/base/mostrar_ejemplo.js` ayuda a renderizar los ejemplos,
+- el archivo `js/1. base/mostrar_ejemplo.js` ayuda a renderizar los ejemplos,
 - la ejecución ocurre en navegador sin necesidad de un servidor ni de dependencias externas complejas.
 
 ## Recomendaciones de uso
 
-- Empieza por la carpeta `js/base/` para aprender los fundamentos.
+- Empieza por `index.html` y elige la actividad que quieras explorar.
+- Para aprender los fundamentos, comienza por `index_comandos.html` y la carpeta `js/1. base/`.
 - Revisa `objetos_y_m_todos_en_js.md` para consolidar teoría y conceptos clave.
 - Para visualización avanzada, abre los ejemplos dentro de `js/plantillas/`, `js/3. d3/`, `js/4. plotly/` y `js/5. Leaflet/`.
 - Si un recurso está comprimido en `.zip`, extráelo antes de abrir el archivo HTML asociado.

@@ -3,389 +3,74 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Financial Analytics Dashboard - IBEX 35 & US Call Options</title>
-
-  <!--Carga de las librerías d3 que se utilizarán -->
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-
-
-  <!-- Carga de las librerías de stilo y diseño -->
-  <link rel="stylesheet" href="./css/style.css">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Elige una ruta para aprender JavaScript y explorar visualizaciones de datos interactivas.">
+  <title>Aprende JavaScript y visualización de datos</title>
+  <link rel="stylesheet" href="./css/inicio.css">
 </head>
 
 <body>
+  <main class="landing">
+    <header class="intro">
+      <p class="eyebrow">Aula interactiva · JavaScript</p>
+      <h1>Aprende haciendo</h1>
+      <p class="intro-copy">
+        Explora los conceptos paso a paso y ponlos en práctica con ejemplos interactivos.
+        Elige por dónde quieres empezar.
+      </p>
+    </header>
 
-  <h1>Dashboard de Analítica Financiera - IBEX 35 & US Call Options</h1>
-
-  <div class="control-panel">
-    <div>
-      <label for="file-picker" style="font-size: 13px; margin-right: 8px;">Cargar 'financial_data.json':</label>
-      <input type="file" id="file-picker" accept=".json" class="btn" style="background:#334155;">
-    </div>
-    <div id="status" class="status-msg">Intentando lectura automática...</div>
-  </div>
-
-  <div class="dashboard-grid">
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">1. IBEX 35 & Acciones</span>
-        <button class="btn" id="btn-toggle-scale">Alternar Escala (Base 100 / Nominal)</button>
+    <section class="learning-paths" aria-labelledby="paths-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Tu siguiente paso</p>
+          <h2 id="paths-title">Elige una ruta de aprendizaje</h2>
+        </div>
+        <p class="section-hint">Puedes volver aquí para cambiar de ruta cuando quieras.</p>
       </div>
-      <div id="ibex-chart"></div>
-    </div> 
 
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">2. US Market - Primas Call Options ($)</span>
-      </div>
-      <div id="options-chart"></div>
-    </div>
+      <nav class="path-list" aria-label="Rutas de aprendizaje">
+        <a class="path-card" href="./index_comandos.html">
+          <span class="path-number" aria-hidden="true">01</span>
+          <span class="path-content">
+            <span class="path-level">Fundamentos</span>
+            <span class="path-title">JavaScript básico</span>
+            <span class="path-description">
+              Aprende variables, operadores, funciones, estructuras de datos y eventos
+              con ejemplos organizados por temas.
+            </span>
+            <span class="path-topics" aria-label="Temas: conceptos, ejemplos y práctica">
+              <span>Conceptos</span>
+              <span>Ejemplos</span>
+              <span>Práctica</span>
+            </span>
+            <span class="path-action">Empezar con los fundamentos <span aria-hidden="true">→</span></span>
+          </span>
+        </a>
 
-   <div class="card">
-      <div class="card-header">
-        <span class="card-title">3. Matriz de Correlación Cruzada</span>
-      </div>
-      <div id="correlation-chart"></div>
-    </div>
+        <a class="path-card path-card-accent" href="./Ejercicio/index_ej.html">
+          <span class="path-number" aria-hidden="true">02</span>
+          <span class="path-content">
+            <span class="path-level">Aprendizaje aplicado</span>
+            <span class="path-title">Visualización de datos</span>
+            <span class="path-description">
+              Explora un dashboard interactivo con gráficos, correlaciones y datos
+              financieros creado con D3.js.
+            </span>
+            <span class="path-topics" aria-label="Temas: D3.js, gráficos e interacción">
+              <span>D3.js</span>
+              <span>Gráficos</span>
+              <span>Interacción</span>
+            </span>
+            <span class="path-action">Explorar la visualización <span aria-hidden="true">→</span></span>
+          </span>
+        </a>
+      </nav>
+    </section>
 
-     <div class="card">
-      <div class="card-header">
-        <span class="card-title">4. Volatilidad Móvil Anualizada (20D)</span>
-      </div>
-      <div id="volatility-chart"></div>
-    </div>
-
-  <div class="card full-width">
-      <div class="card-header">
-        <span class="card-title">Filtro de Rango Temporal Interactivo (Brush)</span>
-      </div>
-      <div id="brush-chart"></div>
-    </div>
-  </div>
-
-   <script>
-    const colors = {
-      IBEX: "#38bdf8", SANTANDER: "#f43f5e", INDITEX: "#10b981",
-      AAPL_Call_230: "#f59e0b", NVDA_Call_130: "#8b5cf6", SPY_Call_580: "#ec4899"
-    };
-
-    let rawData = [];
-    let correlationData = {};
-    let isIbexBase100 = true;
-
-    const margin = { top: 20, right: 110, bottom: 30, left: 50 };
-    const width = 600 - margin.left - margin.right;
-    const height = 260 - margin.top - margin.bottom;
-
-    function initDashboard(payload) {
-      rawData = payload.series.map(d => ({
-        ...d,
-        dateObj: d3.timeParse("%Y-%m-%d")(d.date)
-      })).filter(d => d.dateObj !== null);
-
-      correlationData = payload.correlation;
-
-      d3.select("#status")
-        .style("color", "#10b981")
-        .text("✓ Datos cargados e inicializados correctamente");
-
-      renderIBEXChart(rawData);
-      renderOptionsChart(rawData);
-      renderCorrelationHeatmap(correlationData);
-      renderVolatilityChart(rawData);
-      renderBrushChart(rawData);
-    }
-
-    // 1. GRÁFICO IBEX 35
-    function renderIBEXChart(data) {
-      d3.select("#ibex-chart").html("");
-      const keys = ["IBEX", "SANTANDER", "INDITEX"];
-      const scaleType = isIbexBase100 ? "norm" : "raw";
-
-      const svg = d3.select("#ibex-chart")
-        .append("svg")
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-      const x = d3.scaleTime()
-        .domain(d3.extent(data, d => d.dateObj))
-        .range([0, width]);
-
-      const allVals = data.flatMap(d => keys.map(k => d.ibex[scaleType][k])).filter(v => v !== null && !isNaN(v));
-      if (allVals.length === 0) return;
-
-      const y = d3.scaleLinear()
-        .domain([d3.min(allVals) * 0.95, d3.max(allVals) * 1.05])
-        .range([height, 0]);
-
-      svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
-      svg.append("g").attr("transform", `translate(0,${height})`).attr("class", "axis").call(d3.axisBottom(x).ticks(5));
-      svg.append("g").attr("class", "axis").call(d3.axisLeft(y));
-
-      keys.forEach(key => {
-        const line = d3.line()
-          .defined(d => d.ibex[scaleType][key] !== null)
-          .x(d => x(d.dateObj))
-          .y(d => y(d.ibex[scaleType][key]))
-          .curve(d3.curveMonotoneX);
-
-        svg.append("path")
-          .datum(data)
-          .attr("fill", "none")
-          .attr("stroke", colors[key] || "#fff")
-          .attr("stroke-width", 2)
-          .attr("d", line);
-
-        const validData = data.filter(d => d.ibex[scaleType][key] !== null);
-        if (validData.length > 0) {
-          const lastVal = validData[validData.length - 1].ibex[scaleType][key];
-          svg.append("text")
-            .attr("x", width + 8)
-            .attr("y", y(lastVal))
-            .attr("fill", colors[key] || "#fff")
-            .attr("font-size", "11px")
-            .attr("alignment-baseline", "middle")
-            .text(`${key} (${lastVal.toFixed(1)})`);
-        }
-      });
-    }
-
-    // 2. GRÁFICO OPIONES CALL USA
-    function renderOptionsChart(data) {
-      d3.select("#options-chart").html("");
-      const keys = ["AAPL_Call_230", "NVDA_Call_130", "SPY_Call_580"];
-
-      const svg = d3.select("#options-chart")
-        .append("svg")
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-      const x = d3.scaleTime()
-        .domain(d3.extent(data, d => d.dateObj))
-        .range([0, width]);
-
-      const allVals = data.flatMap(d => keys.map(k => d.options.raw[k])).filter(v => v !== null && !isNaN(v));
-      if (allVals.length === 0) return;
-
-      const y = d3.scaleLinear()
-        .domain([0, d3.max(allVals) * 1.1])
-        .range([height, 0]);
-
-      svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
-      svg.append("g").attr("transform", `translate(0,${height})`).attr("class", "axis").call(d3.axisBottom(x).ticks(5));
-      svg.append("g").attr("class", "axis").call(d3.axisLeft(y));
-
-      keys.forEach(key => {
-        const line = d3.line()
-          .defined(d => d.options.raw[key] !== null)
-          .x(d => x(d.dateObj))
-          .y(d => y(d.options.raw[key]))
-          .curve(d3.curveMonotoneX);
-
-        svg.append("path")
-          .datum(data)
-          .attr("fill", "none")
-          .attr("stroke", colors[key] || "#fff")
-          .attr("stroke-width", 2)
-          .attr("d", line);
-
-        const validData = data.filter(d => d.options.raw[key] !== null);
-        if (validData.length > 0) {
-          const lastVal = validData[validData.length - 1].options.raw[key];
-          svg.append("text")
-            .attr("x", width + 8)
-            .attr("y", y(lastVal))
-            .attr("fill", colors[key] || "#fff")
-            .attr("font-size", "11px")
-            .attr("alignment-baseline", "middle")
-            .text(`${key} ($${lastVal.toFixed(1)})`);
-        }
-      });
-    }
-
-    // 3. HEATMAP CORRELACIÓN
-    function renderCorrelationHeatmap(corrData) {
-      d3.select("#correlation-chart").html("");
-      if (!corrData) return;
-
-      const hMargin = { top: 20, right: 20, bottom: 60, left: 90 };
-      const hWidth = 600 - hMargin.left - hMargin.right;
-      const hHeight = 260 - hMargin.top - hMargin.bottom;
-
-      const svg = d3.select("#correlation-chart")
-        .append("svg")
-        .attr("viewBox", `0 0 ${hWidth + hMargin.left + hMargin.right} ${hHeight + hMargin.top + hMargin.bottom}`)
-        .append("g")
-        .attr("transform", `translate(${hMargin.left},${hMargin.top})`);
-
-      const vars = Object.keys(corrData);
-      const x = d3.scaleBand().domain(vars).range([0, hWidth]).padding(0.05);
-      const y = d3.scaleBand().domain(vars).range([0, hHeight]).padding(0.05);
-
-      const colorScale = d3.scaleSequential().interpolator(d3.interpolateRdBu).domain([1, -1]);
-
-      svg.append("g")
-        .attr("transform", `translate(0,${hHeight})`)
-        .attr("class", "axis")
-        .call(d3.axisBottom(x))
-        .selectAll("text")
-        .attr("transform", "rotate(-30)")
-        .style("text-anchor", "end");
-
-      svg.append("g").attr("class", "axis").call(d3.axisLeft(y));
-
-      vars.forEach(row => {
-        vars.forEach(col => {
-          const val = corrData[row][col];
-          svg.append("rect")
-            .attr("x", x(col))
-            .attr("y", y(row))
-            .attr("width", x.bandwidth())
-            .attr("height", y.bandwidth())
-            .style("fill", colorScale(val));
-
-          svg.append("text")
-            .attr("x", x(col) + x.bandwidth() / 2)
-            .attr("y", y(row) + y.bandwidth() / 2)
-            .attr("text-anchor", "middle")
-            .attr("alignment-baseline", "middle")
-            .attr("fill", Math.abs(val) > 0.5 ? "#fff" : "#000")
-            .attr("font-size", "10px")
-            .text(val !== undefined ? val.toFixed(2) : "0.00");
-        });
-      });
-    }
-
-    // 4. VOLATILIDAD MÓVIL
-    function renderVolatilityChart(data) {
-      d3.select("#volatility-chart").html("");
-
-      const svg = d3.select("#volatility-chart")
-        .append("svg")
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-      const x = d3.scaleTime()
-        .domain(d3.extent(data, d => d.dateObj))
-        .range([0, width]);
-
-      const activeKeys = [
-        { key: "IBEX", group: "ibex" },
-        { key: "AAPL_Call_230", group: "options" }
-      ];
-
-      const allVals = data.flatMap(d => activeKeys.map(k => d[k.group].volatility[k.key]))
-        .filter(v => v !== null && !isNaN(v));
-
-      const yMax = allVals.length > 0 ? d3.max(allVals) * 1.1 : 1;
-      const y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
-
-      svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
-      svg.append("g").attr("transform", `translate(0,${height})`).attr("class", "axis").call(d3.axisBottom(x).ticks(5));
-      svg.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format(".0%")));
-
-      activeKeys.forEach(item => {
-        const line = d3.line()
-          .defined(d => d[item.group].volatility[item.key] !== null)
-          .x(d => x(d.dateObj))
-          .y(d => y(d[item.group].volatility[item.key]))
-          .curve(d3.curveMonotoneX);
-
-        svg.append("path")
-          .datum(data)
-          .attr("fill", "none")
-          .attr("stroke", colors[item.key] || "#fff")
-          .attr("stroke-dasharray", item.group === "options" ? "4,4" : "0")
-          .attr("stroke-width", 2)
-          .attr("d", line);
-      });
-    }
-
-    // 5. BRUSH INTERACTIVO
-    function renderBrushChart(data) {
-      d3.select("#brush-chart").html("");
-
-      const bHeight = 70;
-      const bWidth = (width * 2) + margin.left + margin.right - 80;
-
-      const svg = d3.select("#brush-chart")
-        .append("svg")
-        .attr("viewBox", `0 0 ${bWidth + margin.left + margin.right} ${bHeight + margin.top + margin.bottom}`)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-      const x = d3.scaleTime()
-        .domain(d3.extent(data, d => d.dateObj))
-        .range([0, bWidth]);
-
-      const vals = data.map(d => d.ibex.norm.IBEX).filter(v => v !== null);
-      const y = d3.scaleLinear().domain([0, d3.max(vals) || 100]).range([bHeight, 0]);
-
-      const area = d3.area()
-        .defined(d => d.ibex.norm.IBEX !== null)
-        .x(d => x(d.dateObj))
-        .y0(bHeight)
-        .y1(d => y(d.ibex.norm.IBEX));
-
-      svg.append("path")
-        .datum(data)
-        .attr("fill", "#0284c7")
-        .attr("opacity", 0.4)
-        .attr("d", area);
-
-      svg.append("g").attr("transform", `translate(0,${bHeight})`).attr("class", "axis").call(d3.axisBottom(x));
-
-      const brush = d3.brushX()
-        .extent([[0, 0], [bWidth, bHeight]])
-        .on("brush end", (event) => {
-          if (!event.selection) return;
-          const [x0, x1] = event.selection.map(x.invert);
-          const filtered = data.filter(d => d.dateObj >= x0 && d.dateObj <= x1);
-          if (filtered.length > 0) {
-            renderIBEXChart(filtered);
-            renderOptionsChart(filtered);
-            renderVolatilityChart(filtered);
-          }
-        });
-
-      svg.append("g").attr("class", "brush").call(brush);
-    }
-
-    // INTENTO DE LECTURA VÍA FETCH
-    d3.json("financial_data.json")
-      .then(initDashboard)
-      .catch(() => {
-        d3.select("#status")
-          .style("color", "#f43f5e")
-          .text("Bloqueo de explorador (CORS) o archivo no hallado. Selecciona 'financial_data.json' con el botón de la izquierda.");
-      });
-
-    // LECTURA MANUAL MEDIANTE INPUT FILE
-    document.getElementById('file-picker').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const parsed = JSON.parse(evt.target.result);
-          initDashboard(parsed);
-        } catch(err) {
-          alert("El archivo seleccionado no coincide con el formato JSON esperado.");
-        }
-      };
-      reader.readAsText(file);
-    });
-
-    // BOTÓN DE TOGGLE DE ESCALA
-    document.getElementById('btn-toggle-scale').addEventListener('click', () => {
-      isIbexBase100 = !isIbexBase100;
-      renderIBEXChart(rawData);
-    });
-  </script>
+    <footer class="page-footer">
+      <p>Avanza a tu ritmo: prueba, observa y experimenta.</p>
+    </footer>
+  </main>
 </body>
 </html>
